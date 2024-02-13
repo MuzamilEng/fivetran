@@ -2,7 +2,9 @@
 
 import { nanoid } from "nanoid";
 import { useCallback, useMemo, useState, useEffect } from "react";
-import { LiveObject } from "@liveblocks/client";
+import { LiveObject } from "@liveblocks/client"; 
+import { Icon } from "@iconify/react";
+import { sidebarInfo } from "../../Data";
 
 import { 
   useHistory, 
@@ -448,10 +450,38 @@ export const Canvas = ({
     }
   }, [deleteLayers, history]);
 
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const toggleDropdown = (title: any) => {
+    setOpenDropdown(openDropdown === title ? null : title);
+  };
+
   return (
     <main
-      className="h-full w-full relative bg-neutral-100 touch-none"
+      className="h-full relative w-full bg-neutral-100 touch-none"
     >
+      <div className="absolute w-full max-w-[20vw] border-[1px] rounded-md border-gray-600 overflow-y-scroll p-[1vw] right-0 top-[7vw] h-[30vw]">
+        <nav className="flex items-center p-[0.7vw] rounded-full bg-gray-300">
+        <Icon icon="charm:search" className="text-[1.3vw] text-gray-500" />
+          <input type="text" placeholder="Search..." className="w-full ml-[0.5vw] text-[1vw] border-none focus:outline-none bg-inherit" />
+        </nav>
+        <aside className="mt-[1vw] w-full p-[0.5vw]">
+      {sidebarInfo.map((item, index) => (
+        <div className="w-full" key={index}>
+          <h1 className="text-[1vw] font-bold text-gray-500 mb-[0.5vw] cursor-pointer" onClick={() => toggleDropdown(item?.title)} >
+          {item.title}
+          </h1>
+          {openDropdown === item.title && (
+            <div className="flex flex-wrap">
+              {item.items.map((imageItem, imageIndex) => (
+                <img src={imageItem?.img} alt={imageItem?.name} key={imageIndex} className="w-[2vw] h-[2vw] m-[0.5vw]" />
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </aside>
+      </div>
       <Info boardId={boardId} />
       <Participants />
       <Toolbar
