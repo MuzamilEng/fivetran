@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState, useEffect } from "react";
 import { LiveObject } from "@liveblocks/client"; 
 import { Icon } from "@iconify/react";
 import { sidebarInfo } from "../../Data";
+import Draggable from 'react-draggable';
 
 import { 
   useHistory, 
@@ -450,31 +451,56 @@ export const Canvas = ({
     }
   }, [deleteLayers, history]);
 
+  const [searchImage, setSearchImages] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const toggleDropdown = (title: any) => {
     setOpenDropdown(openDropdown === title ? null : title);
   };
+  
+  const handleSearchImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchImages(e.target.value);
+    console.log(searchImage, "searchImage");
+  };
+  const filterImages = sidebarInfo.flatMap(category => category.items)
+  .filter(item => item.name.toLowerCase().includes(searchImage.toLowerCase()));
+console.log(filterImages, "filterImages");
+
+useEffect(()=> {
+  if(filterImages.length < 2){
+    setSelectedImage(filterImages?.[0]?.img)
+  }
+}, [filterImages])
+
 
   return (
     <main
       className="h-full relative w-full bg-neutral-100 touch-none"
     >
-      <div className="absolute w-full max-w-[20vw] border-[1px] rounded-md border-gray-600 overflow-y-scroll p-[1vw] right-0 top-[7vw] h-[30vw]">
-        <nav className="flex items-center p-[0.7vw] rounded-full bg-gray-300">
+      <Draggable>
+      <div className="absolute top-[3vw] left-[30vw] cursor-pointer w-full max-w-[5vw]">
+        {selectedImage && <img src={selectedImage} alt="" className="w-full" />}
+      </div>
+       </Draggable>
+      <div className="absolute bg-white  w-full max-w-[21.5vw] shadow-lg rounded-lg  p-[1vw] left-0 top-[7vw] h-[30vw]">
+        <nav className="flex items-center p-[0.7vw] rounded-full bg-gray-100">
         <Icon icon="charm:search" className="text-[1.3vw] text-gray-500" />
-          <input type="text" placeholder="Search..." className="w-full ml-[0.5vw] text-[1vw] border-none focus:outline-none bg-inherit" />
+          <input type="text" placeholder="Search..." onChange={handleSearchImage} className="w-full ml-[0.5vw] text-[1vw] border-none focus:outline-none bg-inherit" />
         </nav>
-        <aside className="mt-[1vw] w-full p-[0.5vw]">
+        <aside className="mt-[1vw] w-full p-[0.5vw] scrollbar-hide overflow-y-scroll h-[25vw]">
       {sidebarInfo.map((item, index) => (
         <div className="w-full" key={index}>
-          <h1 className="text-[1vw] font-bold text-gray-500 mb-[0.5vw] cursor-pointer" onClick={() => toggleDropdown(item?.title)} >
-          {item.title}
-          </h1>
+          <p className="text-[1vw] hover:bg-slate-50 border-b-[0.1vw] p-[0.3vw] flex justify-between items-center font-bold text-gray-500 mb-[0.5vw] cursor-pointer" onClick={() => toggleDropdown(item?.title)} >
+          <span>{item.title}</span>
+          <Icon icon="ep:arrow-down-bold" className="text-[1vw] text-gray-700" />
+          </p>
           {openDropdown === item.title && (
-            <div className="flex flex-wrap">
-              {item.items.map((imageItem, imageIndex) => (
-                <img src={imageItem?.img} alt={imageItem?.name} key={imageIndex} className="w-[2vw] h-[2vw] m-[0.5vw]" />
+            <div className="flex flex-wrap w-full">
+              {filterImages?.map((imageItem, imageIndex) => (
+                <figure>
+                  <img src={imageItem?.img} onClick={()=> setSelectedImage(imageItem?.img)} alt={imageItem?.name} key={imageIndex} className="w-[2vw] h-[2vw] m-[0.5vw]" />
+                </figure>
               ))}
             </div>
           )}
@@ -484,7 +510,8 @@ export const Canvas = ({
       </div>
       <Info boardId={boardId} />
       <Participants />
-      <Toolbar
+     <aside className="absolute right-[5vw] top-[23vw]">
+     <Toolbar
         canvasState={canvasState}
         setCanvasState={setCanvasState}
         canRedo={canRedo}
@@ -492,6 +519,7 @@ export const Canvas = ({
         undo={history.undo}
         redo={history.redo}
       />
+     </aside>
       <SelectionTools
         camera={camera}
         setLastUsedColor={setLastUsedColor}

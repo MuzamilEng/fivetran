@@ -57,7 +57,7 @@ export const Info = ({
               "font-semibold text-xl ml-2 text-black",
               font.className,
             )}>
-              Fivetran
+              RapidCanvas
             </span>
           </Link>
         </Button>
