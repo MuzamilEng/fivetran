@@ -496,10 +496,11 @@ useEffect(()=> {
           <Icon icon="ep:arrow-down-bold" className="text-[1vw] text-gray-700" />
           </p>
           {openDropdown === item.title && (
-            <div className="flex flex-wrap w-full">
+            <div className="grid grid-cols-2 gap-[1vw] w-full">
               {filterImages?.map((imageItem, imageIndex) => (
                 <figure>
                   <img src={imageItem?.img} onClick={()=> setSelectedImage(imageItem?.img)} alt={imageItem?.name} key={imageIndex} className="w-[2vw] h-[2vw] m-[0.5vw]" />
+                  <span className="text-[0.8vw] w-[3vw] text-center">{imageItem?.name}</span>
                 </figure>
               ))}
             </div>
