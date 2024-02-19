@@ -452,63 +452,81 @@ export const Canvas = ({
   }, [deleteLayers, history]);
 
   const [searchImage, setSearchImages] = useState('');
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState(null);
-
+  const [showCancelBtn, setShowCancelButton] = useState(false)
+  
   const toggleDropdown = (title: any) => {
     setOpenDropdown(openDropdown === title ? null : title);
   };
-  
+    
   const handleSearchImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchImages(e.target.value);
-    console.log(searchImage, "searchImage");
   };
+  
   const filterImages = sidebarInfo.flatMap(category => category.items)
-  .filter(item => item.name.toLowerCase().includes(searchImage.toLowerCase()));
-console.log(filterImages, "filterImages");
+    .filter(item => item.name.toLowerCase().includes(searchImage.toLowerCase()));
+  
+  console.log(filterImages, "filterImages");
+  
+  const handleImageSelect = (imageUrl: string) => {
+    setSelectedImages(prevImages => [...prevImages, imageUrl]);
+  };
 
-useEffect(()=> {
-  if(filterImages.length < 2){
-    setSelectedImage(filterImages?.[0]?.img)
-  }
-}, [filterImages])
+  const removeImage = (indexToRemove: number) => {
+    setSelectedImages(prevImages => prevImages.filter((_, index) => index !== indexToRemove));
+  };
 
+  const handleMouseEnter = () => {
+    setShowCancelButton(true);
+  };
+  
+  const handleMouseLeave = () => {
+    setShowCancelButton(false);
+  };
 
   return (
     <main
       className="h-full relative w-full bg-neutral-100 touch-none"
     >
-      <Draggable>
-      <div className="absolute top-[3vw] left-[30vw] cursor-pointer w-full max-w-[5vw]">
-        {selectedImage && <img src={selectedImage} alt="" className="w-full" />}
-      </div>
-       </Draggable>
-      <div className="absolute bg-white  w-full max-w-[21.5vw] shadow-lg rounded-lg  p-[1vw] left-0 top-[7vw] h-[30vw]">
-        <nav className="flex items-center p-[0.7vw] rounded-full bg-gray-100">
-        <Icon icon="charm:search" className="text-[1.3vw] text-gray-500" />
-          <input type="text" placeholder="Search..." onChange={handleSearchImage} className="w-full ml-[0.5vw] text-[1vw] border-none focus:outline-none bg-inherit" />
-        </nav>
-        <aside className="mt-[1vw] w-full p-[0.5vw] scrollbar-hide overflow-y-scroll h-[25vw]">
-      {sidebarInfo.map((item, index) => (
-        <div className="w-full" key={index}>
-          <p className="text-[1vw] hover:bg-slate-50 border-b-[0.1vw] p-[0.3vw] flex justify-between items-center font-bold text-gray-500 mb-[0.5vw] cursor-pointer" onClick={() => toggleDropdown(item?.title)} >
-          <span>{item.title}</span>
-          <Icon icon="ep:arrow-down-bold" className="text-[1vw] text-gray-700" />
-          </p>
-          {openDropdown === item.title && (
-            <div className="grid grid-cols-2 gap-[1vw] w-full">
-              {filterImages?.map((imageItem, imageIndex) => (
-                <figure>
-                  <img src={imageItem?.img} onClick={()=> setSelectedImage(imageItem?.img)} alt={imageItem?.name} key={imageIndex} className="w-[2vw] h-[2vw] m-[0.5vw]" />
-                  <span className="text-[0.8vw] w-[3vw] text-center">{imageItem?.name}</span>
-                </figure>
-              ))}
-            </div>
-          )}
+       <div className="absolute top-[3vw] left-[30vw] cursor-pointer w-full max-w-[5vw]">
+      {selectedImages.map((image, index) => (
+        <div key={index}>
+          <Draggable>
+            <section className="relative">
+            {showCancelBtn && <p className="p-[0.5vw] absolute top-0 right-0 cursor-pointer flex items-center justify-center bg-[#383737] w-[1vw] h-[1vw] text-white text-center rounded-full text-[0.7vw]" onClick={() => removeImage(index)}>x</p>}
+          <img onClick={()=> setShowCancelButton(true)}  src={image} alt={`Selected image ${index}`} className="w-full" />
+            </section>
+          </Draggable>
         </div>
       ))}
-    </aside>
-      </div>
+    </div>
+    <div className="absolute bg-white  w-full max-w-[21.5vw] shadow-lg rounded-lg  p-[1vw] left-0 top-[7vw] h-[30vw]">
+      <nav className="flex items-center p-[0.7vw] rounded-full bg-gray-100">
+        <Icon icon="charm:search" className="text-[1.3vw] text-gray-500" />
+        <input type="text" placeholder="Search..." onChange={handleSearchImage} className="w-full ml-[0.5vw] text-[1vw] border-none focus:outline-none bg-inherit" />
+      </nav>
+      <aside className="mt-[1vw] w-full p-[0.5vw] scrollbar-hide overflow-y-scroll h-[25vw]">
+        {sidebarInfo.map((item, index) => (
+          <div className="w-full" key={index}>
+            <p className="text-[1vw] hover:bg-slate-50 border-b-[0.1vw] p-[0.3vw] flex justify-between items-center font-bold text-gray-500 mb-[0.5vw] cursor-pointer" onClick={() => toggleDropdown(item?.title)}>
+              <span>{item.title}</span>
+              <Icon icon="ep:arrow-down-bold" className="text-[1vw] text-gray-700" />
+            </p>
+            {openDropdown === item.title && (
+              <div className="grid grid-cols-2 gap-[1vw] w-full">
+                {filterImages?.map((imageItem, imageIndex) => (
+                  <figure key={imageIndex}>
+                    <img src={imageItem?.img} onClick={() => handleImageSelect(imageItem?.img)} alt={imageItem?.name} className="w-[2vw] cursor-pointer h-[2vw] m-[0.5vw]" />
+                    <span className="text-[0.8vw] w-[3vw] text-center">{imageItem?.name}</span>
+                  </figure>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </aside>
+    </div>
       <Info boardId={boardId} />
       <Participants />
      <aside className="absolute right-[5vw] top-[23vw]">

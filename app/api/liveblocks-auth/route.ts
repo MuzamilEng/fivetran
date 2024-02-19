@@ -3,6 +3,7 @@ import { Liveblocks } from "@liveblocks/node";
 import { ConvexHttpClient } from "convex/browser";
 
 import { api } from "@/convex/_generated/api";
+import { useEffect } from "react";
 
 const convex = new ConvexHttpClient(
   process.env.NEXT_PUBLIC_CONVEX_URL!
@@ -16,9 +17,9 @@ export async function POST(request: Request) {
   const authorization = await auth();
   const user = await currentUser();
 
-  if (!authorization || !user) {
-    return new Response("Unauthorized", { status: 403 });
-  }
+  // if (!authorization || !user) {
+  //   return new Response("Unauthorized", { status: 403 });
+  // }
 
   const { room } = await request.json();
   const board = await convex.query(api.board.get, { id: room });
@@ -28,12 +29,12 @@ export async function POST(request: Request) {
   }
 
   const userInfo = {
-    name: user.firstName || "Teammeate",
-    picture: user.imageUrl,
+    name: user?.firstName || "Teammeate",
+    picture: user?.imageUrl,
   };
 
   const session = liveblocks.prepareSession(
-    user.id,
+    user?.id,
     { userInfo }
   );
 
