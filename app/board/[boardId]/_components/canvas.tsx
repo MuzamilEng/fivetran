@@ -513,7 +513,7 @@ export const Canvas = ({
         <div className="w-full">
           <div className="w-full mb-[0.5vw]">
             <figure>
-              <img src={filterImages[0]?.img} onClick={() => handleImageSelect(filterImages[0]?.img)} alt={filterImages[0]?.name} className="w-[2vw] cursor-pointer h-[2vw] m-[0.5vw]" />
+             {filterImages[0]?.img && <img src={filterImages[0]?.img} onClick={() => handleImageSelect(filterImages[0]?.img)} alt={filterImages[0]?.name} className="w-[2vw] cursor-pointer h-[2vw] m-[0.5vw]" />}
               <span className="text-[0.8vw] w-[3vw] text-center">{filterImages[0]?.name}</span>
             </figure>
           </div>
