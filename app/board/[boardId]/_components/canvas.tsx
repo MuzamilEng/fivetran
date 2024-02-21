@@ -519,7 +519,7 @@ export const Canvas = ({
           </div>
         </div>
       )}
-  {sidebarInfo?.map((item, index) => (
+       {sidebarInfo?.map((item, index) => (
     <div className="w-full" key={index}>
       <p className="text-[1vw] hover:bg-slate-50 border-b-[0.1vw] p-[0.3vw] flex justify-between items-center font-bold text-gray-500 mb-[0.5vw] cursor-pointer" onClick={() => toggleDropdown(item?.title)}>
         <span>{item.title}</span>
@@ -538,6 +538,13 @@ export const Canvas = ({
     </div>
      ))}
     </aside>
+    <div className="mt-[1vw]">
+        <Draggable>
+              <section className="relative w-full max-w-[7vw]">
+                <img  src={'/logo.png'} alt={`Selected image`} className="w-full" />
+              </section>
+            </Draggable>
+        </div>
       </div>
       <Info boardId={boardId} />
       <Participants />
