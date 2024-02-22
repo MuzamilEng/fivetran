@@ -503,7 +503,7 @@ export const Canvas = ({
           </div>
         ))}
       </div>
-      <div className="absolute bg-white  w-full max-w-[21.5vw] shadow-lg rounded-lg  p-[1vw] left-0 top-[7vw] h-[30vw]">
+      <div className="absolute bg-white  w-full max-w-[21.5vw] shadow-lg rounded-lg  p-[1vw] left-0 top-[7vw] h-[40vw]">
         <nav className="flex items-center p-[0.7vw] rounded-full bg-gray-100">
           <Icon icon="charm:search" className="text-[1.3vw] text-gray-500" />
           <input type="text" placeholder="Search..." onChange={handleSearchImage} className="w-full ml-[0.5vw] text-[1vw] border-none focus:outline-none bg-inherit" />
@@ -538,12 +538,12 @@ export const Canvas = ({
     </div>
      ))}
     </aside>
-    <div className="mt-[1vw]">
-        <Draggable>
-              <section className="relative w-full max-w-[7vw]">
+    <div className="-mt-[1vw] ml-[5vw]">
+        {/* <Draggable> */}
+              <section className="relative w-full max-w-[7vw]" onClick={()=> setSelectedImages([...selectedImages, '/logo.png'])}>
                 <img  src={'/logo.png'} alt={`Selected image`} className="w-full" />
               </section>
-            </Draggable>
+            {/* </Draggable> */}
         </div>
       </div>
       <Info boardId={boardId} />
